@@ -35,17 +35,11 @@ def traverse(df, row_num, position, trees, slope):
 
 def main():
     input = pd.read_csv('input.csv')
-    slope = [1,1]
-    slope1 = traverse(df = input, row_num = 0, position = 0, trees = 0, slope = slope)
-    slope = [1,3]
-    slope2 = traverse(df = input, row_num = 0, position = 0, trees = 0, slope = slope)
-    slope = [1,5]
-    slope3 = traverse(df = input, row_num = 0, position = 0, trees = 0, slope = slope)
-    slope = [1,7]
-    slope4 = traverse(df = input, row_num = 0, position = 0, trees = 0, slope = slope)
-    slope = [2,1]
-    slope5 = traverse(df = input, row_num = 0, position = 0, trees = 0, slope = slope)
-    trees = slope1 * slope2 * slope3 * slope4 * slope5
+    slopes = [[1,1], [1,3], [1,5], [1,7], [2,1]]
+    trees = 1
+    for s in slopes:
+        tree_count = traverse(df = input, row_num = 0, position = 0, trees = 0, slope = s)
+        trees *= tree_count
     print(trees)
 
 if __name__ == "__main__":
