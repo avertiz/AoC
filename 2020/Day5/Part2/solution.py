@@ -11,7 +11,7 @@
 import pandas as pd
 
 def range_split(upper, lower):
-    value = (upper - lower) / 2 + .5
+    value = (upper - lower) / 2 + .5   # probably a better way to do this
     return(value)
 
 def binary_search(range, letters, char, lower, upper):
