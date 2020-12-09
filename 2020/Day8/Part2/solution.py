@@ -84,7 +84,7 @@ def fix_fun(df, row_num):
     return(df)
 
 def run_code(df, accumulator, row_num):
-    if row_num == df.shape[0] - 1:
+    if row_num == len(df.index) - 1:
         return(accumulator)
     else:        
         fun = get_fun(df = df, row_num = row_num)
@@ -93,19 +93,25 @@ def run_code(df, accumulator, row_num):
         elif fun == 'jmp':
             results = jmp_fun(df = df, accumulator = accumulator, row_num = row_num)
         elif fun == 'nop':
-            results = nop_fun(df = df, accumulator = accumulator, row_num = row_num)
-            
+            results = nop_fun(df = df, accumulator = accumulator, row_num = row_num)            
         if df['executed'][results['row_num']] == True:                    
             return(False)
-
         return(run_code(df = df, accumulator = results['accumulator'], row_num = results['row_num']))
 
 def main():
     input = pd.read_csv('input.csv', skip_blank_lines=False)
     input['executed'] = False
     df_copy = copy.copy(input)
-    for key, row in input.iterrows():
-        if row['boot_code'][:3] == 'nop'  
+    for row in range(len(input.index)):
+        if input['boot_code'][row][:3] in ['jmp', 'nop']:
+            df_copy = fix_fun(df = df_copy, row_num = row)
+            status = run_code(df = df_copy, accumulator = 0, row_num = 0)
+            if status:
+                accumulator = status
+                break
+            else:
+                df_copy = copy.copy(input)
+    print(accumulator)
 
 if __name__ == "__main__":
     main()
