@@ -64,7 +64,7 @@
 # What is the earliest timestamp such that all of the listed bus IDs depart at offsets matching their positions in the list?
 
 import pandas as pd
-import time
+import copy
 
 def parse_ids(df):
     ids = df['input'][1]
@@ -75,27 +75,50 @@ def get_ids_and_offset(ids):
     ids_and_offset_dict = {}
     for id in range(len(ids)):
         if ids[id] != 'x':
-            ids_and_offset_dict[int(ids[id])] = id
+            num = int(ids[id])
+            if id == 0:
+                ids_and_offset_dict[num] = 0
+            else:
+                ids_and_offset_dict[num] = abs(num - id)
+                if ids_and_offset_dict[num] > num:
+                    ids_and_offset_dict[num] = num - (ids_and_offset_dict[num] % num) 
     return(ids_and_offset_dict)
 
-def test_current_offset(timestamp, ids_and_offset_dict, id_offset_list):
-    for id in id_offset_list:
-        if (timestamp + ids_and_offset_dict[id]) % id != 0:
-            return(False)
-    return(True)
+def egcd(a, b):
+    if a == 0:
+        return(b, 0, 1)
+    else:
+        g, y, x = egcd(b % a, a)
+        return(g, x - (b // a) * y, y)
+
+def modinv(a, m):
+    g, x, y = egcd(a, m)
+    return(x % m)
+
+def get_timestamp(ids_and_offset_dict):
+    ids = list(ids_and_offset_dict.keys())
+    ids_copy = copy.copy(ids)
+    timestamp = 0
+    N = 1
+    Ni = 1
+    for id in ids:
+        N *= id
+        bi = ids_and_offset_dict[id]
+        ids_copy.remove(id)
+        for integer in ids_copy:
+            Ni *= integer
+        xi = modinv(a = Ni, m = id)
+        timestamp += bi*Ni*xi        
+        ids_copy = copy.copy(ids)
+        Ni = 1
+    timestamp = timestamp % N
+    return(timestamp)
 
 def main():
     input = pd.read_csv('input.csv', skip_blank_lines=False, header=None, names = ['input'])
     ids = parse_ids(df = input)
     ids_and_offset_dict = get_ids_and_offset(ids = ids)
-    timestamp = int(list(ids_and_offset_dict.keys())[0])
-    timestamp_jump = int(list(ids_and_offset_dict.keys())[0])
-    id_offset_list = list(ids_and_offset_dict.keys())[1:]
-    print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
-    while not test_current_offset(timestamp = timestamp, ids_and_offset_dict = ids_and_offset_dict, id_offset_list = id_offset_list):
-        timestamp += timestamp_jump
-        # if timestamp % 10000000 == 0:
-        #     print('Timestamp:', timestamp, '\nCurrent Duration:', (time.time() - start_time)/60, 'minutes')
+    timestamp = get_timestamp(ids_and_offset_dict = ids_and_offset_dict)
     print(timestamp)
 
 if __name__ == "__main__":
