@@ -33,7 +33,7 @@ class Solution:
 
     def __init__(self):
         self.input = pd.read_csv('input.csv')
-        # list for each direction that we will use to multiply position
+        # dict for each direction that we will use to multiply position
         # first element is up/down, second element is forward/back
         self.direction_dict = {'up': [-1,0], 'forward': [0,1], 'down': [1,0]} 
         # starting position, first element is depth and second element is horizontal
