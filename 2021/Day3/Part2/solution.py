@@ -35,10 +35,6 @@ class Solution:
 
     def __init__(self):
         self.input = pd.read_csv('input.csv', dtype=str)
-        self.oxy_gen_rating = None
-        self.oxy_gen_rating_nums = []
-        self.co2_scrub_rating = None
-        self.co2_scrub_rating_nums = []
         self.solution = None
         self.bit_count_dict = { # first element of value is 0 count, second element is 1 count
                                 0:[0,0],
