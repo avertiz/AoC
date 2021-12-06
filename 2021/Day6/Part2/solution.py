@@ -5,7 +5,6 @@
 # How many lanternfish would there be after 256 days?
 
 import copy
-from os import cpu_count
 
 class Solution:
 
